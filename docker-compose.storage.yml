@@ -16,5 +16,5 @@ volumes:
   cvat_share:
     driver_opts:
       type: none
-      device: /home/cvat/cvat-data
+      device: /mnt/archiv/anotace
       o: bind
