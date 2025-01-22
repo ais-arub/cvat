@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 
 import { Row, Col } from 'antd/lib/grid';
-import Icon, { LinkOutlined, DeleteOutlined } from '@ant-design/icons';
+import Icon, { LinkOutlined, DeleteOutlined, GlobalOutlined } from '@ant-design/icons';
 import Slider from 'antd/lib/slider';
 import InputNumber from 'antd/lib/input-number';
 import Text from 'antd/lib/typography/Text';
@@ -42,6 +42,7 @@ interface Props {
     onDeleteFrame(): void;
     onRestoreFrame(): void;
     switchNavigationBlocked(blocked: boolean): void;
+    onDigiarchiveClick(): void;
 }
 
 const componentShortcuts = {
@@ -82,6 +83,7 @@ function PlayerNavigation(props: Props): JSX.Element {
         onDeleteFrame,
         onRestoreFrame,
         switchNavigationBlocked,
+        onDigiarchiveClick,
     } = props;
 
     const [frameInputValue, setFrameInputValue] = useState<number>(frameNumber);
@@ -149,6 +151,19 @@ function PlayerNavigation(props: Props): JSX.Element {
         </CVATTooltip>
     );
 
+    const getDigiarchiveUrl = (fullPath: string): string => {
+        // Získat samotný název souboru bez cesty
+        const filename = fullPath.match(/([^/]+)$/)?.[1] || '';
+
+        // Odstranit příponu a F01 na konci
+        const baseFilename = filename.replace(/\.[^/.]+$/, '').replace(/F\d+$/, '');
+
+        // Přidat pomlčky: rozdělit podle C a N
+        const formattedId = baseFilename.replace(/^(C)(.+)(N.+)$/, '$1-$2-$3');
+
+        return `https://digiarchiv.aiscr.cz/id/${formattedId}`;
+    };
+
     return (
         <>
             { workspace !== Workspace.SINGLE_SHAPE && (
@@ -187,10 +202,19 @@ function PlayerNavigation(props: Props): JSX.Element {
                         </CVATTooltip>
                     </Col>
                     <Col offset={1}>
+                        <CVATTooltip title='Otevřít v Digiarchivu'>
+                            <GlobalOutlined
+                                className='cvat-player-digiarchive-icon'
+                                onClick={() => {
+                                    const digiarchiveUrl = getDigiarchiveUrl(frameFilename);
+                                    window.open(digiarchiveUrl, '_blank');
+                                }}
+                            />
+                        </CVATTooltip>
                         <CVATTooltip title='Create frame URL'>
                             <LinkOutlined className='cvat-player-frame-url-icon' onClick={onURLIconClick} />
                         </CVATTooltip>
-                        { deleteFrameIcon }
+                        {deleteFrameIcon}
                     </Col>
                 </Row>
             </Col>
