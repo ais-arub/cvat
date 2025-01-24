@@ -198,7 +198,7 @@ function PlayerNavigation(props: Props): JSX.Element {
                 <Row justify='center'>
                     <Col className='cvat-player-filename-wrapper'>
                         <CVATTooltip title={`${frameFilename}`}>
-                            <Text type='secondary'>{frameFilename}</Text>
+                            <Text type='secondary'>{frameFilename.match(/([^/]+)$/)?.[1] || ''}</Text>
                         </CVATTooltip>
                     </Col>
                     <Col offset={1}>
